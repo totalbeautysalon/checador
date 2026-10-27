@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Iniciando Total Beauty...</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #000;
+            color: #f59e0b; /* amber-500 */
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            overflow: hidden;
+        }
+        .loader {
+            border: 4px solid #27272a; /* zinc-800 */
+            border-top: 4px solid #ec4899; /* pink-500 */
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            animation: spin 1s linear infinite;
+            margin-bottom: 24px;
+            box-shadow: 0 0 15px rgba(236, 72, 153, 0.2);
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        h1 { 
+            margin: 0 0 8px 0; 
+            font-size: 28px; 
+            font-weight: 900;
+            letter-spacing: -0.5px;
+        }
+        p { 
+            color: #a1a1aa; 
+            margin: 0; 
+            font-size: 15px;
+        }
+        .logo-placeholder {
+            font-size: 40px;
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+<body>
+    <div class="logo-placeholder">✨</div>
+    <div class="loader"></div>
+    <h1>Checador Total Beauty</h1>
+    <p>Iniciando el motor del sistema... por favor espera.</p>
+
+    <script>
+        function checkServer() {
+            // Intentamos conectar al servidor en modo no-cors
+            fetch('http://localhost:3333/admin/login', { mode: 'no-cors' })
+                .then(() => {
+                    // Si el servidor ya levantó, redirigimos la ventana a la app real
+                    window.location.replace('http://localhost:3333/admin/dashboard/checador');
+                })
+                .catch(() => {
+                    // Si falla (CONNECTION_REFUSED), el servidor sigue apagado. Reintentamos en 1.5s
+                    setTimeout(checkServer, 1500);
+                });
+        }
+        
+        // Empezamos a verificar 3 segundos después de abrir esta ventana
+        setTimeout(checkServer, 3000);
+    </script>
+</body>
+</html>
