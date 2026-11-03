@@ -99,6 +99,7 @@ El proyecto incluye archivos listos para usar en la computadora del salón:
 - **`Arrancar_Checador.bat`**: Inicia el servidor de Next.js en segundo plano (si no está encendido) y abre Microsoft Edge en modo aplicación maximizada sin barras de navegación.
 - **`Cargando_Checador.html`**: Pantalla de carga inteligente que verifica la disponibilidad del servidor antes de redirigir al login.
 - **`Checador_Invisible.vbs`**: Ejecuta el archivo batch de manera silenciosa sin mostrar ventanas negras de consola (CMD).
+- **`Subir_A_GitHub.bat`**: Sube automáticamente todos los cambios realizados al repositorio de GitHub con un solo doble clic.
 
 ---
 
