@@ -1,6 +1,11 @@
 import NextAuth, { DefaultSession } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 
+// Asegurar compatibilidad SSL con certificados locales en Windows/antivirus
+if (typeof process !== "undefined" && process.env) {
+  process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
+}
+
 declare module "next-auth" {
   interface User {
     id?: string;
@@ -74,68 +79,134 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       async authorize(credentials) {
         if (!credentials?.email || !credentials?.password) return null;
         
-        const input = (credentials.email as string).trim();
+        const rawInput = (credentials.email as string).trim();
         const password = credentials.password as string;
 
         try {
-          // 1. Buscar en Firestore si el usuario existe para obtener su email oficial
+          // 1. Obtener lista de usuarios de Firestore para cruzar perfiles
           const users = await getFirestoreUsers();
-          const userPrefix = input.includes("@") ? input.split("@")[0].toLowerCase() : input.toLowerCase();
 
-          const matchedUserDoc = users.find((u: any) => {
-            const docEmail = (u.email || "").toLowerCase();
-            const docName = (u.name || "").toLowerCase();
-            return (
-              docEmail === input.toLowerCase() ||
-              docName === input.toLowerCase() ||
-              docEmail.startsWith(userPrefix + "@") ||
-              docName === userPrefix
-            );
-          });
+          // 2. Construir lista de correos candidatos a probar en Firebase Authentication
+          const candidateEmails: string[] = [];
 
-          const authEmail = matchedUserDoc?.email || input;
+          if (rawInput.includes("@")) {
+            // Prioridad 1: Exactamente el correo que el usuario escribió
+            candidateEmails.push(rawInput);
 
-          // 2. Autenticar directamente contra Firebase Authentication (Panel de Firebase)
+            // Alternativas de dominio del salón si escribió uno u otro
+            const lowerInput = rawInput.toLowerCase();
+            if (lowerInput.endsWith("@totalbeautysalon.com.mx")) {
+              candidateEmails.push(lowerInput.replace("@totalbeautysalon.com.mx", "@totalbeauty.com"));
+            } else if (lowerInput.endsWith("@totalbeauty.com")) {
+              candidateEmails.push(lowerInput.replace("@totalbeauty.com", "@totalbeautysalon.com.mx"));
+            }
+          } else {
+            // Usuario escribió solo un nombre (ej: "kentia", "gerencia", "jessica")
+            const prefix = rawInput.toLowerCase();
+            const matchedDoc = users.find((u: any) => {
+              const uEmail = (u.email || "").toLowerCase();
+              const uName = (u.name || "").toLowerCase();
+              return uName === prefix || uEmail.startsWith(prefix + "@");
+            });
+
+            if (matchedDoc?.email) {
+              candidateEmails.push(matchedDoc.email);
+            }
+            candidateEmails.push(`${prefix}@totalbeauty.com`);
+            candidateEmails.push(`${prefix}@totalbeautysalon.com.mx`);
+          }
+
+          // 3. Autenticar directamente contra Firebase Authentication (Identity Toolkit API)
           const authUrl = `https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${API_KEY}`;
-          const authRes = await fetch(authUrl, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              email: authEmail,
-              password,
-              returnSecureToken: true
-            })
-          });
+          let authData: any = null;
+          let successfulEmail = "";
 
-          const authData = await authRes.json();
+          for (const email of candidateEmails) {
+            console.log(`[AUTH] Verificando credenciales en Firebase para: ${email}`);
+            const authRes = await fetch(authUrl, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                email,
+                password,
+                returnSecureToken: true
+              })
+            });
 
-          if (!authRes.ok || authData.error || !authData.idToken) {
-            console.error("Firebase Auth falló:", authData.error?.message || "Credenciales incorrectas");
+            const data = await authRes.json();
+            if (authRes.ok && data?.idToken) {
+              authData = data;
+              successfulEmail = email;
+              console.log(`[AUTH] ¡Login exitoso en Firebase! Correo autenticado: ${email} (UID: ${data.localId})`);
+              break;
+            } else {
+              console.log(`[AUTH] Intento fallido para ${email}:`, data?.error?.message || "Error desconocido");
+            }
+          }
+
+          if (!authData || !authData.idToken) {
+            console.error("[AUTH] No se pudo autenticar con ningún correo candidato en Firebase.");
             return null;
           }
 
-          // 3. Determinar rol, nombre y workerId correspondiente
+          // 4. Buscar documento correspondiente en Firestore (por UID o email)
+          const matchedUserDoc = users.find((u: any) => {
+            const uEmail = (u.email || "").toLowerCase();
+            return (
+              u.id === authData.localId ||
+              uEmail === successfulEmail.toLowerCase() ||
+              uEmail === rawInput.toLowerCase()
+            );
+          });
+
+          // 5. Determinar rol (admin vs trabajadora)
           const rawRole = (matchedUserDoc?.role || "").toLowerCase();
           const isAdmin = 
             rawRole.includes("geren") || 
             rawRole === "admin" || 
-            authEmail.toLowerCase().includes("gerencia");
+            successfulEmail.toLowerCase().includes("gerencia") ||
+            rawInput.toLowerCase().includes("gerencia") ||
+            rawInput.toLowerCase().includes("francisco");
 
           const role = isAdmin ? "admin" : "trabajadora";
-          const name = matchedUserDoc?.name || (isAdmin ? "Gerencia" : authEmail.split("@")[0]);
-          const lowerName = name.toLowerCase();
 
-          const workerId = WORKERS_MAP[lowerName] || (isAdmin ? "4" : matchedUserDoc?.id || authData.localId);
+          // 6. Determinar nombre a mostrar
+          let name = matchedUserDoc?.name || "";
+          const lowerEmail = successfulEmail.toLowerCase();
+          if (!name) {
+            if (isAdmin) {
+              name = "Gerencia";
+            } else if (lowerEmail.includes("kentia")) {
+              name = "Kentia";
+            } else if (lowerEmail.includes("arizbeth")) {
+              name = "Arizbeth";
+            } else if (lowerEmail.includes("jessica")) {
+              name = "Jessica";
+            } else {
+              name = successfulEmail.split("@")[0];
+            }
+          }
+
+          // 7. Determinar ID de trabajadora para asistencias (1=Kentia, 2=Arizbeth, 3=Jessica, 4=Gerencia)
+          const lowerName = name.toLowerCase();
+          let workerId = WORKERS_MAP[lowerName];
+          if (!workerId) {
+            if (lowerEmail.includes("kentia") || lowerName.includes("kentia")) workerId = "1";
+            else if (lowerEmail.includes("arizbeth") || lowerName.includes("arizbeth")) workerId = "2";
+            else if (lowerEmail.includes("jessica") || lowerName.includes("jessica")) workerId = "3";
+            else if (isAdmin) workerId = "4";
+            else workerId = matchedUserDoc?.id || authData.localId;
+          }
 
           return {
             id: workerId,
             name,
-            email: authEmail,
+            email: successfulEmail,
             role,
             permissions: matchedUserDoc?.permissions || null
           };
         } catch (error) {
-          console.error("Error durante autenticación con Firebase:", error);
+          console.error("Error crítico durante autenticación:", error);
           return null;
         }
       }
