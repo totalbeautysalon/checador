@@ -37,12 +37,29 @@ Sistema de registro y control de asistencias para el personal de **Total Beauty 
 
 ---
 
-## ⚙️ Instalación y Configuración
+## 🌐 Despliegue en la Web (Online / Vercel)
+
+Para que el checador funcione en vivo en internet las 24 horas y pueda abrirse desde cualquier celular, tablet o computadora sin necesidad de servidores locales:
+
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Ftotalbeautysalon%2Fchecador&env=NEXTAUTH_SECRET&envDescription=Clave+secreta+para+cifrar+sesiones&envLink=https%3A%2F%2Fgenerate-secret.vercel.app%2F32)
+
+### Pasos rápidos para publicarlo gratis en Vercel:
+1. Inicia sesión en [Vercel](https://vercel.com/) con tu cuenta de GitHub.
+2. Haz clic en **"Add New..."** ➔ **"Project"**.
+3. Selecciona el repositorio **`totalbeautysalon/checador`** y haz clic en **"Import"**.
+4. En **Environment Variables**, añade:
+   - `NEXTAUTH_SECRET`: una clave secreta cualquiera (ejemplo: `totalbeauty-secret-2026`)
+5. Haz clic en **"Deploy"**.
+6. ¡Listo! Vercel te proporcionará una URL pública y segura con HTTPS (ejemplo: `https://checador-totalbeauty.vercel.app`) donde el checador funcionará en vivo.
+
+---
+
+## ⚙️ Instalación y Configuración Local
 
 1. **Clonar el repositorio**:
    ```bash
-   git clone https://github.com/<TU_USUARIO>/Total_Beauty_Checador.git
-   cd Total_Beauty_Checador
+   git clone https://github.com/totalbeautysalon/checador.git
+   cd checador
    ```
 
 2. **Instalar dependencias**:

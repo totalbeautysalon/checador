@@ -62,6 +62,8 @@ async function getFirestoreUsers() {
 }
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
+  trustHost: true,
+  secret: process.env.NEXTAUTH_SECRET || process.env.AUTH_SECRET || "super-secret-key-change-me-in-production",
   providers: [
     CredentialsProvider({
       name: "Credentials",
@@ -164,7 +166,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         httpOnly: true,
         sameSite: 'lax',
         path: '/',
-        secure: false
+        secure: process.env.NODE_ENV === 'production'
       }
     }
   },
