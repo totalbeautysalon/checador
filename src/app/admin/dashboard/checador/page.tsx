@@ -96,6 +96,7 @@ export default async function ChecadorPage() {
           hoursWorked={hoursWorked}
           minutesWorked={minutesWorked}
           targetHours={targetHours}
+          userName={session?.user?.name || ""}
         />
       </div>
     );

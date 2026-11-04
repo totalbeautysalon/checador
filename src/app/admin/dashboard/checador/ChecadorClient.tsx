@@ -12,14 +12,16 @@ export default function ChecadorClient({
   currentUserId,
   hoursWorked,
   minutesWorked,
-  targetHours
+  targetHours,
+  userName
 }: { 
   workers: any[], 
   attendances: any[],
   currentUserId: string,
   hoursWorked: number,
   minutesWorked: number,
-  targetHours: number
+  targetHours: number,
+  userName?: string
 }) {
   const [stream, setStream] = useState<MediaStream | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
@@ -116,7 +118,7 @@ export default function ChecadorClient({
       {/* Panel de Checador */}
       <div className="bg-zinc-900 rounded-3xl p-6 lg:p-8 shadow-2xl shadow-pink-900/20 border border-zinc-800 flex flex-col items-center justify-center h-full min-h-0">
         <h2 className="text-lg lg:text-xl font-bold text-amber-500 mb-2 flex items-center gap-2 shrink-0">
-          <Clock className="w-5 h-5 lg:w-6 lg:h-6 text-pink-500" /> Hola, {currentWorker?.user?.name || "Usuario"}
+          <Clock className="w-5 h-5 lg:w-6 lg:h-6 text-pink-500" /> Hola, {userName || currentWorker?.user?.name || "Colaboradora"}
         </h2>
         <p className="text-zinc-400 text-xs lg:text-sm mb-4 shrink-0">Registra tu asistencia de hoy</p>
 
