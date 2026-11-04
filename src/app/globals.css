@@ -12,10 +12,24 @@
   --font-mono: var(--font-geist-mono);
 }
 
-body {
+html, body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  overscroll-behavior-y: none;
+}
+
+/* Safe areas for notched phones (iPhone, modern Android) */
+.pt-safe {
+  padding-top: max(1rem, env(safe-area-inset-top));
+}
+.pb-safe {
+  padding-bottom: max(1rem, env(safe-area-inset-bottom));
+}
+.pb-safe-nav {
+  padding-bottom: calc(5rem + env(safe-area-inset-bottom));
 }
 
 .bg-pattern {
@@ -26,12 +40,20 @@ body {
 
 .custom-scrollbar::-webkit-scrollbar {
   width: 6px;
+  height: 6px;
 }
 .custom-scrollbar::-webkit-scrollbar-track {
   background: transparent;
 }
 .custom-scrollbar::-webkit-scrollbar-thumb {
-  background-color: #3f3f46;
+  background-color: #27272a;
   border-radius: 10px;
 }
-input, textarea { @apply select-text; } 
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background-color: #3f3f46;
+}
+
+input, textarea { 
+  user-select: text;
+  -webkit-user-select: text;
+}

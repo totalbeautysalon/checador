@@ -43,10 +43,10 @@ export default async function AsistenciasPage() {
   });
 
   return (
-    <div className="p-8 max-w-7xl mx-auto">
-      <div className="mb-8">
-        <h1 className="text-3xl font-black text-amber-500 tracking-tight mb-2">Historial de Asistencias</h1>
-        <p className="text-pink-400">Horas trabajadas y registros de entrada/salida del equipo.</p>
+    <div className="p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto w-full">
+      <div className="mb-6 sm:mb-8">
+        <h1 className="text-2xl sm:text-3xl font-black text-amber-500 tracking-tight mb-1 sm:mb-2">Historial de Asistencias</h1>
+        <p className="text-pink-400 text-xs sm:text-sm lg:text-base">Horas trabajadas y registros de entrada/salida del equipo.</p>
       </div>
 
       <AsistenciasClient 

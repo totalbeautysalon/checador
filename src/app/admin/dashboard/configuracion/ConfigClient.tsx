@@ -41,9 +41,9 @@ export default function ConfigClient({ workers }: { workers: any[] }) {
   };
 
   return (
-    <div className="bg-black p-8 rounded-3xl border border-zinc-800 shadow-xl shadow-pink-900/10 max-w-3xl">
-      <h2 className="text-xl font-bold text-amber-500 flex items-center gap-2 mb-6">
-        <Settings className="w-6 h-6 text-pink-500" />
+    <div className="bg-black p-4 sm:p-8 rounded-3xl border border-zinc-800 shadow-xl shadow-pink-900/10 max-w-3xl">
+      <h2 className="text-lg sm:text-xl font-bold text-amber-500 flex items-center gap-2 mb-4 sm:mb-6">
+        <Settings className="w-5 h-5 sm:w-6 sm:h-6 text-pink-500" />
         Configuración de Horas por Quincena
       </h2>
       

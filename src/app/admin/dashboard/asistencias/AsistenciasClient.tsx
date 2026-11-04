@@ -72,18 +72,18 @@ export default function AsistenciasClient({
   return (
     <div className="space-y-8">
       {/* Resumen de la semana */}
-      <div className="bg-black p-6 rounded-3xl border border-zinc-800 shadow-xl shadow-pink-900/10">
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="text-xl font-bold text-amber-500 flex items-center gap-2">
-            <Calendar className="w-6 h-6 text-pink-500" />
+      <div className="bg-black p-4 sm:p-6 rounded-3xl border border-zinc-800 shadow-xl shadow-pink-900/10">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-6">
+          <h2 className="text-lg sm:text-xl font-bold text-amber-500 flex items-center gap-2">
+            <Calendar className="w-5 h-5 sm:w-6 sm:h-6 text-pink-500" />
             Horas Trabajadas (Esta Quincena)
           </h2>
-          <span suppressHydrationWarning className="text-sm font-medium text-pink-400 bg-zinc-900 border border-zinc-800 px-3 py-1 rounded-full">
+          <span suppressHydrationWarning className="text-xs sm:text-sm font-medium text-pink-400 bg-zinc-900 border border-zinc-800 px-3 py-1 rounded-full w-fit">
             {format(new Date(weekStart), "d MMM", { locale: es })} - {format(new Date(weekEnd), "d MMM", { locale: es })}
           </span>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
           {hoursPerWorker.map(stat => (
             <div key={stat.workerId} className="p-4 rounded-2xl bg-zinc-900 border border-zinc-800 flex items-center justify-between hover:border-pink-500/30 transition">
               <div className="flex items-center gap-3">
@@ -108,9 +108,9 @@ export default function AsistenciasClient({
       </div>
 
       {/* Historial General */}
-      <div className="bg-black p-6 rounded-3xl border border-zinc-800 shadow-xl shadow-amber-900/10">
-        <h2 className="text-xl font-bold text-amber-500 flex items-center gap-2 mb-6">
-          <Clock className="w-6 h-6 text-pink-500" />
+      <div className="bg-black p-4 sm:p-6 rounded-3xl border border-zinc-800 shadow-xl shadow-amber-900/10">
+        <h2 className="text-lg sm:text-xl font-bold text-amber-500 flex items-center gap-2 mb-4 sm:mb-6">
+          <Clock className="w-5 h-5 sm:w-6 sm:h-6 text-pink-500" />
           Últimos 50 Registros
         </h2>
 

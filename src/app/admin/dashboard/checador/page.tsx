@@ -83,10 +83,13 @@ export default async function ChecadorPage() {
     }
   }
     return (
-      <div className="p-4 lg:p-8 max-w-7xl mx-auto h-full flex flex-col">
-        <div className="mb-4 shrink-0">
-          <h1 className="text-2xl lg:text-3xl font-black text-amber-500 tracking-tight mb-1">Checador de Asistencia 📸</h1>
-          <p className="text-pink-400 text-sm lg:text-lg">Registra tu entrada y salida capturando una foto de seguridad.</p>
+      <div className="p-3 sm:p-6 lg:p-8 max-w-7xl mx-auto w-full flex flex-col">
+        <div className="mb-3 sm:mb-4 shrink-0">
+          <h1 className="text-xl sm:text-2xl lg:text-3xl font-black text-amber-400 tracking-tight flex items-center gap-2">
+            <span>Checador de Asistencia</span>
+            <span className="text-lg">📸</span>
+          </h1>
+          <p className="text-zinc-400 text-xs sm:text-sm lg:text-base">Registra tu entrada y salida capturando tu foto de seguridad.</p>
         </div>
 
         <ChecadorClient 

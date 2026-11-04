@@ -31,39 +31,39 @@ export default function HistorialQuincenasClient({
   });
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6 sm:space-y-8">
       {/* Filtros */}
-      <div className="bg-black p-6 rounded-3xl border border-zinc-800 shadow-xl shadow-pink-900/10 flex flex-wrap gap-4 items-end">
-        <div>
-          <label className="block text-zinc-500 text-sm mb-1">Año</label>
+      <div className="bg-black p-4 sm:p-6 rounded-3xl border border-zinc-800 shadow-xl shadow-pink-900/10 flex flex-wrap gap-3 sm:gap-4 items-end">
+        <div className="flex-1 min-w-[120px]">
+          <label className="block text-zinc-500 text-xs sm:text-sm mb-1">Año</label>
           <select 
             value={selectedYear} 
             onChange={e => setSelectedYear(e.target.value)}
-            className="bg-zinc-900 border border-zinc-800 text-white px-4 py-2 rounded-lg outline-none focus:border-amber-500"
+            className="w-full bg-zinc-900 border border-zinc-800 text-white px-3 sm:px-4 py-2 rounded-xl outline-none focus:border-amber-500 text-sm"
           >
             {[2024, 2025, 2026, 2027].map(y => (
               <option key={y} value={y}>{y}</option>
             ))}
           </select>
         </div>
-        <div>
-          <label className="block text-zinc-500 text-sm mb-1">Mes</label>
+        <div className="flex-1 min-w-[140px]">
+          <label className="block text-zinc-500 text-xs sm:text-sm mb-1">Mes</label>
           <select 
             value={selectedMonth} 
             onChange={e => setSelectedMonth(e.target.value)}
-            className="bg-zinc-900 border border-zinc-800 text-white px-4 py-2 rounded-lg outline-none focus:border-amber-500"
+            className="w-full bg-zinc-900 border border-zinc-800 text-white px-3 sm:px-4 py-2 rounded-xl outline-none focus:border-amber-500 text-sm"
           >
             {['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'].map((m, i) => (
               <option key={i} value={i}>{m}</option>
             ))}
           </select>
         </div>
-        <div>
-          <label className="block text-zinc-500 text-sm mb-1">Quincena</label>
+        <div className="w-full sm:w-auto flex-1 min-w-[200px]">
+          <label className="block text-zinc-500 text-xs sm:text-sm mb-1">Quincena</label>
           <select 
             value={selectedQuincena} 
             onChange={e => setSelectedQuincena(e.target.value)}
-            className="bg-zinc-900 border border-zinc-800 text-white px-4 py-2 rounded-lg outline-none focus:border-amber-500"
+            className="w-full bg-zinc-900 border border-zinc-800 text-white px-3 sm:px-4 py-2 rounded-xl outline-none focus:border-amber-500 text-sm"
           >
             <option value="1">1ra Quincena (1 al 15)</option>
             <option value="2">2da Quincena (16 al Fin de mes)</option>

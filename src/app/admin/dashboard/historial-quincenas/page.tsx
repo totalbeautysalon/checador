@@ -19,10 +19,10 @@ export default async function HistorialPage() {
   });
 
   return (
-    <div className="p-8 max-w-7xl mx-auto h-[calc(100vh-2rem)] overflow-y-auto">
-      <div className="mb-8">
-        <h1 className="text-3xl font-black text-amber-500 tracking-tight mb-2">Historial de Quincenas</h1>
-        <p className="text-pink-400 text-lg">Busca y filtra el historial completo de asistencias por quincena.</p>
+    <div className="p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto w-full">
+      <div className="mb-6 sm:mb-8">
+        <h1 className="text-2xl sm:text-3xl font-black text-amber-500 tracking-tight mb-1 sm:mb-2">Historial de Quincenas</h1>
+        <p className="text-pink-400 text-xs sm:text-sm lg:text-base">Busca y filtra el historial completo de asistencias por quincena.</p>
       </div>
 
       <HistorialClient allAttendances={allAttendances} />
