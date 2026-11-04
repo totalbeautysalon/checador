@@ -2,31 +2,37 @@
 
 import { useState } from "react";
 import { signIn } from "next-auth/react";
-import { useRouter } from "next/navigation";
-
-import { Power } from "lucide-react";
+import { Power, Loader2 } from "lucide-react";
 
 export default function LoginPage() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-  const router = useRouter();
+  const [loading, setLoading] = useState(false);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
+    setLoading(true);
     
-    const res = await signIn("credentials", {
-      email: username,
-      password: password,
-      redirect: false,
-    });
+    try {
+      const res = await signIn("credentials", {
+        email: username.trim(),
+        password: password,
+        redirect: false,
+      });
 
-    if (res?.error) {
-      setError("Usuario o contraseña incorrectos");
-    } else {
-      router.push("/admin/dashboard/checador");
-      router.refresh();
+      if (res?.error) {
+        setError("Usuario o contraseña incorrectos. Verifica tus credenciales de Firebase.");
+        setLoading(false);
+      } else {
+        // Redirección directa completa para sincronizar sesión
+        window.location.href = "/admin/dashboard/checador";
+      }
+    } catch (err) {
+      console.error(err);
+      setError("Error al conectar con el servidor.");
+      setLoading(false);
     }
   };
 
@@ -54,13 +60,15 @@ export default function LoginPage() {
 
         <form onSubmit={handleLogin} className="space-y-6">
           <div>
-            <label className="block text-sm font-medium text-amber-500 mb-1">Correo Electrónico</label>
+            <label className="block text-sm font-medium text-amber-500 mb-1">Correo Electrónico o Usuario</label>
             <input
               type="text"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
+              placeholder="ejemplo@totalbeauty.com o nombre"
               className="w-full px-4 py-3 bg-black border border-zinc-700 text-white rounded-md focus:ring-amber-500 focus:border-amber-500 outline-none transition"
               required
+              disabled={loading}
             />
           </div>
           <div>
@@ -71,13 +79,22 @@ export default function LoginPage() {
               onChange={(e) => setPassword(e.target.value)}
               className="w-full px-4 py-3 bg-black border border-zinc-700 text-white rounded-md focus:ring-amber-500 focus:border-amber-500 outline-none transition"
               required
+              disabled={loading}
             />
           </div>
           <button
             type="submit"
-            className="w-full py-3 bg-gradient-to-r from-amber-500 to-amber-600 text-black font-bold rounded-md hover:from-amber-400 hover:to-amber-500 transition shadow-lg shadow-amber-500/20"
+            disabled={loading}
+            className="w-full py-3 bg-gradient-to-r from-amber-500 to-amber-600 text-black font-bold rounded-md hover:from-amber-400 hover:to-amber-500 transition shadow-lg shadow-amber-500/20 flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
           >
-            Iniciar Sesión
+            {loading ? (
+              <>
+                <Loader2 className="w-5 h-5 animate-spin" />
+                Verificando...
+              </>
+            ) : (
+              "Iniciar Sesión"
+            )}
           </button>
         </form>
       </div>

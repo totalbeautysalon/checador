@@ -24,11 +24,13 @@ export async function clockIn(workerId: string, photoBase64: string) {
       return { success: false, error: "Ya tienes un registro de entrada abierto hoy." };
     }
 
+    const session = await auth();
     const worker = WORKERS.find(w => w.id === workerId);
+    const workerName = worker?.user?.name || session?.user?.name || "Colaboradora";
     
     await addDoc(collection(db, "attendances"), {
       workerId,
-      workerName: worker?.user.name,
+      workerName,
       checkIn: new Date(),
       checkOut: null,
       photoIn: photoBase64,

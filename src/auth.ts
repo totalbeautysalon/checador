@@ -93,12 +93,25 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             // Prioridad 1: Exactamente el correo que el usuario escribió
             candidateEmails.push(rawInput);
 
-            // Alternativas de dominio del salón si escribió uno u otro
             const lowerInput = rawInput.toLowerCase();
+            if (lowerInput !== rawInput) {
+              candidateEmails.push(lowerInput);
+            }
+
+            // Alternativas de dominio del salón si escribió uno u otro
             if (lowerInput.endsWith("@totalbeautysalon.com.mx")) {
               candidateEmails.push(lowerInput.replace("@totalbeautysalon.com.mx", "@totalbeauty.com"));
             } else if (lowerInput.endsWith("@totalbeauty.com")) {
               candidateEmails.push(lowerInput.replace("@totalbeauty.com", "@totalbeautysalon.com.mx"));
+            }
+
+            // Si el correo coincide con algún usuario de Firestore, añadir también ese correo oficial
+            const matchedDoc = users.find((u: any) => {
+              const uEmail = (u.email || "").toLowerCase();
+              return uEmail === lowerInput || uEmail.startsWith(lowerInput.split("@")[0] + "@");
+            });
+            if (matchedDoc?.email && !candidateEmails.includes(matchedDoc.email)) {
+              candidateEmails.push(matchedDoc.email);
             }
           } else {
             // Usuario escribió solo un nombre (ej: "kentia", "gerencia", "jessica")
